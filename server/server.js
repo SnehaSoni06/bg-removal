@@ -19,14 +19,6 @@ const startServer = async () => {
 
     // API routes
     app.get('/', (req, res) => res.send('API Working'));
-
-    // Only listen on the server locally, not on Vercel
-    if (process.env.NODE_ENV !== 'production') {
-      const PORT = process.env.PORT || 4000;
-      app.listen(PORT, () => {
-        console.log(`Server running locally on Port ${PORT}`);
-      });
-    }
   } catch (error) {
     console.error("Failed to start server:", error);
     process.exit(1); // Exit if server fails to start
