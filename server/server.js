@@ -1,19 +1,27 @@
-import 'dotenv/config'  
-import express from 'express'
-import cors from 'cors'
-import connectDB from './configs/mongodb.js'
+import 'dotenv/config';
+import express from 'express';
+import cors from 'cors';
+import connectDB from './configs/mongodb.js';
 
+const PORT = process.env.PORT || 4000;
+const app = express();
 
-//App config
-const PORT= process.env.PORT || 4000
-const app= express()
-await connectDB()
+const startServer = async () => {
+  try {
+    await connectDB();
 
-//Initialise middleware
-app.use(express.json())
-app.use(cors())
+    // Middleware
+    app.use(express.json());
+    app.use(cors({ origin: '*' })); // Allows all origins; adjust as needed
 
-//API routes
-app.get('/', (req,res)=>res.send("API Working"))
+    // API routes
+    app.get('/', (req, res) => res.send('API Working'));
 
-app.listen(PORT, ()=> console.log("Server running on Port "+PORT))
+    app.listen(PORT, () => console.log(`Server running on Port ${PORT}`));
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
