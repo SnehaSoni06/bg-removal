@@ -1,11 +1,10 @@
 import { Webhook } from 'svix';
 
-async function initializeWebhook() {
-  const base64 = await import('@stablelib/base64');
-  // Now you can use `base64` here.
-}
-
-initializeWebhook().catch(console.error);
+let base64;
+const loadBase64 = async () => {
+  const module = await import('@stablelib/base64');
+  base64 = module.base64;
+};
 
 
 
@@ -18,7 +17,7 @@ const clerkWebhooks = async (req,res)=>{
     try{
 
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
-        const { base64 } = await import('@stablelib/base64');
+        if (!base64) await loadBase64();
 
         await whook.verify(JSON.stringify(req.body),{
             "svix-id":req.headers["svix-id"],
