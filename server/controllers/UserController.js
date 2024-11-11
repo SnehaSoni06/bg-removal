@@ -1,11 +1,13 @@
 import { Webhook } from 'svix';
 
-// async function initializeWebhook() {
-//   const base64 = await import('@stablelib/base64');
-//   // Now you can use `base64` here.
-// }
+async function initializeWebhook() {
+  const base64 = await import('@stablelib/base64');
+  // Now you can use `base64` here.
+}
 
-// initializeWebhook().catch(console.error);
+initializeWebhook().catch(console.error);
+
+
 
 import userModel from '../models/userModel.js'
 
@@ -16,7 +18,7 @@ const clerkWebhooks = async (req,res)=>{
     try{
 
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
-        // const { base64 } = await import('@stablelib/base64');
+        const { base64 } = await import('@stablelib/base64');
 
         await whook.verify(JSON.stringify(req.body),{
             "svix-id":req.headers["svix-id"],
