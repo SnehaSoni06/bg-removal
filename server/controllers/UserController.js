@@ -1,4 +1,6 @@
 import {Webhook} from 'svix';
+import userModel from '../models/userModel.js'
+import  connectDB from '../configs/mongodb.js';
 // import { base64 } from '@stablelib/base64';
 // let base64;
 // const loadBase64 = async () => {
@@ -8,14 +10,13 @@ import {Webhook} from 'svix';
 
 
 
-import userModel from '../models/userModel.js'
-
 //API Controller function to manage clerk user with database
 // http://localhost:4000/api/user/webhooks
 const clerkWebhooks = async (req,res)=>{
 
     try{
-
+        await connectDB();
+        
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
         // if (!base64) await loadBase64();
 
@@ -24,6 +25,8 @@ const clerkWebhooks = async (req,res)=>{
             "svix-timestamp":req.headers["svix-timestamp"],
             "svix-signature":req.headers["svix-signature"]
         })
+          
+        res.status(200).json({ success: true, message: "Webhook received" });
 
         const {data, type}=req.body
 
@@ -35,26 +38,26 @@ const clerkWebhooks = async (req,res)=>{
                     email: data.email_addresses[0].email_address,
                     firstName:data.first_name,
                     lastName:data.last_name,
-                    photo: data.image_url
+                    photo: data.image_url,
                 }
 
                 await userModel.create(userData)
-                res.json({})
+                
                
                 break;
             }
 
             case "user.updated":{
 
-                const userData={
+                const updatedData={
                     email: data.email_addresses[0].email_address,
                     firstName:data.first_name,
                     lastName:data.last_name,
-                    photo: data.image_url
-                }
+                    photo: data.image_url,
+                };
 
-                await userModel.findOneAndUpdate({clerkId:data.id},userData)
-                res.json({})
+                await userModel.findOneAndUpdate({clerkId:data.id},updatedData)
+                
 
                 break;
             }
@@ -62,7 +65,7 @@ const clerkWebhooks = async (req,res)=>{
             case "user.deleted":{
 
                 await userModel.findOneAndDelete({clerkId:data.id})
-                res.json({})
+                
                
                 break;
             }
@@ -70,10 +73,9 @@ const clerkWebhooks = async (req,res)=>{
                
         
             default:
-                break;
+                console.log("Unhandled event type:", type);
+               
         }
-
-
 
     }catch(error){
         console.log(error.message)
