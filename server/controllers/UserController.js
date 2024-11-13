@@ -1,14 +1,6 @@
 import {Webhook} from 'svix';
 import userModel from '../models/userModel.js'
 import  connectDB from '../configs/mongodb.js';
-// import { base64 } from '@stablelib/base64';
-// let base64;
-// const loadBase64 = async () => {
-//   const module = await import('@stablelib/base64');
-//   base64 = module.base64;
-// };
-
-
 
 //API Controller function to manage clerk user with database
 // http://localhost:4000/api/user/webhooks
@@ -18,7 +10,7 @@ const clerkWebhooks = async (req,res)=>{
         await connectDB();
         
         const whook = new Webhook(process.env.CLERK_WEBHOOK_SECRET)
-        // if (!base64) await loadBase64();
+        
 
         await whook.verify(JSON.stringify(req.body),{
             "svix-id":req.headers["svix-id"],
@@ -26,8 +18,7 @@ const clerkWebhooks = async (req,res)=>{
             "svix-signature":req.headers["svix-signature"]
         })
           
-        res.status(200).json({ success: true, message: "Webhook received" });
-
+       
         const {data, type}=req.body
 
         switch (type) {
@@ -76,6 +67,9 @@ const clerkWebhooks = async (req,res)=>{
                 console.log("Unhandled event type:", type);
                
         }
+
+        res.status(200).json({ success: true, message: "Webhook received" });
+
 
     }catch(error){
         console.log(error.message)
