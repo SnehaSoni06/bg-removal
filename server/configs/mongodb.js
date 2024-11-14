@@ -23,8 +23,8 @@ let isConnected = false; // Track the connection status
     
       console.log("Connecting to MongoDB...");
       await mongoose.connect(process.env.MONGODB_URI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true,
         serverSelectionTimeoutMS: 5000, // Timeout after 5 seconds
         socketTimeoutMS: 45000,         // Socket timeout increased
         connectTimeoutMS: 10000         // Connect timeout increased
